@@ -1,0 +1,22 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/alpine318"
+  config.vm.box_check_update = false
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+
+  config.ssh.extra_args = ["-t", "sudo -i"]
+
+  config.vm.define "zakariaS" do |server|
+    server.vm.hostname = "zakariaS"
+    server.vm.network "private_network", ip: "192.168.56.110"
+    server.vm.provider "virtualbox" do |vb|
+      vb.name   = "zakariaS"
+      vb.memory = 2048
+      vb.cpus   = 2
+      vb.gui    = false
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+    server.vm.provision "shell", path: "scripts/server.sh",
+      args: ["192.168.56.110"],
+	  privileged: true
+  end
+end
